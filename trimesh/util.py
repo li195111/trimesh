@@ -2118,8 +2118,10 @@ def write_encoded(file_obj,
         base_name = os.path.basename(file_obj.name)
         for k, v in stuff.items():
             if k=='model.gltf':
-                for buffer in json.loads(v)['buffers']:
-                    buffer['uri'] = base_name.replace('.gltf',buffer['uri'].replace('gltf',''))
+                data = json.loads(v)
+                for idx, buffer in enumerate(data['buffers']):
+                    data['buffers'][idx]['uri'] = base_name.replace('.gltf',buffer['uri'].replace('gltf',''))
+                v = json.dumps(data).encode('utf-8')
                 file_obj.write(v)
             else:
                 buffer_name = base_name.replace('.gltf',k.replace('gltf',''))
