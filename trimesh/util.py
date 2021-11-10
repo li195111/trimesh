@@ -2113,13 +2113,15 @@ def write_encoded(file_obj,
     elif not binary_file and binary_stuff:
         file_obj.write(stuff.decode(encoding))
     elif gltf_stuff:
+        import os
+        dir_path = os.path.dirname(file_obj.name)
+        base_name = os.path.basename(file_obj.name)
         for k, v in stuff.items():
-            import os
             if k=='model.gltf':
+                for buffer in json.loads(v)['buffers']:
+                    buffer['uri'] = base_name.replace('.gltf',buffer['uri'].replace('gltf',''))
                 file_obj.write(v)
             else:
-                dir_path = os.path.dirname(file_obj.name)
-                base_name = os.path.basename(file_obj.name)
                 buffer_name = base_name.replace('.gltf',k.replace('gltf',''))
                 with open(os.path.join(dir_path,buffer_name),'wb') as bf:
                     bf.write(v)
